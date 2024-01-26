@@ -14,7 +14,6 @@ export default function Gallery() {
     { id: 8, src: "image-8.webp" },
   ]);
 
-  // ***** Image Drag & Drop *****
   const handleDragStart = (e, index) => {
     e.dataTransfer.setData("index", index);
   };
@@ -34,7 +33,7 @@ export default function Gallery() {
 
   return (
     <div>
-      <p>{JSON.stringify(images)}</p>
+      <p className={classes.array}>{JSON.stringify(images)}</p>
       <div className={classes.wrapper}>
         {images.map((image, index) => (
           <div
@@ -45,6 +44,7 @@ export default function Gallery() {
             className={classes.imgContainer}
           >
             <div
+              id="Handler"
               key={image.id}
               onDragStart={(e) => handleDragStart(e, index)}
               draggable
