@@ -1,5 +1,6 @@
 import classes from "./Gallery.module.css";
 import React, { useState } from "react";
+import { TbDragDrop } from "react-icons/tb";
 
 export default function Gallery() {
   const [images, setImages] = useState([
@@ -11,9 +12,6 @@ export default function Gallery() {
     { id: 6, src: "image-6.webp" },
     { id: 7, src: "image-7.webp" },
     { id: 8, src: "image-8.webp" },
-    { id: 9, src: "image-9.webp" },
-    { id: 10, src: "image-10.jpeg" },
-    { id: 11, src: "image-11.jpeg" },
   ]);
 
   // ***** Image Drag & Drop *****
@@ -34,27 +32,31 @@ export default function Gallery() {
     setImages(newImages);
   };
 
-  console.log("Images Array: ", JSON.stringify(images));
   return (
     <div>
       <p>{JSON.stringify(images)}</p>
       <div className={classes.wrapper}>
         {images.map((image, index) => (
-          <div key={image.id} className={classes.imgContainer}>
+          <div
+            key={image.id}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragOver={handleDragOver}
+            draggable={false}
+            className={classes.imgContainer}
+          >
             <div
               key={image.id}
               onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, index)}
               draggable
               className={classes.handler}
             >
-              handler
+              <TbDragDrop />
             </div>
             <img
               className={classes.img}
               src={`/assets/${image.src}`}
               alt={`Image ${index + 1}`}
+              draggable={false}
             />
           </div>
         ))}
