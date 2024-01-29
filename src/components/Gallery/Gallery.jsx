@@ -41,10 +41,6 @@ export default function Gallery() {
       const containerTop = imgContainer.offsetTop;
       const containerHeight = imgContainer.clientHeight;
 
-      console.log("mouseY", mouseY);
-      console.log("containerTop", containerTop);
-      console.log("containerHeight", containerHeight);
-
       const upperHalf = mouseY < containerTop + containerHeight / 2;
       const lowerHalf = mouseY > containerTop + containerHeight / 2;
 
