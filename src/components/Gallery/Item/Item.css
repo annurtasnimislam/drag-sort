@@ -1,0 +1,59 @@
+.array {
+  text-align: center;
+  font-weight: 500;
+  color: darkslategray;
+  background-color: whitesmoke;
+  padding: 20px 16em;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  /* gap: 2em; */
+  align-items: center;
+  margin-top: 10px;
+}
+.imgContainer {
+  height: 4em;
+  width: 16em;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: pink;
+  border-radius: 5px;
+}
+.container {
+  height: 6em;
+  display: flex;
+  align-items: center;
+}
+.upperHalf {
+  border-top: 1px solid blue;
+  transition: 300ms;
+}
+.lowerHalf {
+  border-bottom: 1px solid red;
+  transition: 300ms;
+}
+.img {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  border-radius: 10px;
+  background-color: white;
+}
+
+.handler {
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: move;
+  background-color: bisque;
+  border-radius: 2px;
+  color: darkolivegreen;
+}
+.handler > svg {
+  height: 20px;
+  width: 20px;
+}

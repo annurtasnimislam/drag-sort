@@ -1,54 +1,79 @@
-export default function MakeSortable() {
-  return (
-    <div className={classes.wrapper}>
-      {images.map((image, index) => (
-        <div
-          key={image.id}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          draggable={false}
-          className={`${classes.container} ${
-            index === dragOver
-              ? isUpperHalf
-                ? classes.upperHalf
-                : isLowerHalf
-                ? classes.lowerHalf
-                : ""
-              : ""
-          } `}
-        >
-          <div
-            onDragStart={(e) => handleDragStart(e, index)}
-            draggable={drag ? true : false}
-            className={classes.imgContainer}
-          >
-            <div
-              id="Handler"
-              key={image.id}
-              className={classes.handler}
-              onMouseDown={() => setDrag(true)}
-            >
-              <TbDragDrop />
-            </div>
-            <img
-              className={classes.img}
-              src={`/assets/${image.src}`}
-              alt={`Image ${index + 1}`}
-              draggable={false}
-            />
-          </div>
-        </div>
-        // <ImgBox
-        //   key={image.id}
-        //   index={index}
-        //   image={image}
-        //   handleDrop={handleDrop}
-        //   handleDragOver={handleDragOver}
-        //   handleDragStart={handleDragStart}
-        //   isUpperHalf={isUpperHalf}
-        //   isLowerHalf={isLowerHalf}
-        // />
-      ))}
-    </div>
-  );
+import React, { useEffect, useState } from "react";
+
+export default function MakeSortable({ children, items, onSort }) {
+  const [isUpperHalf, setIsUpperHalf] = useState(false);
+  const [isLowerHalf, setIsLowerHalf] = useState(false);
+  const [dragIndex, setDragIndex] = useState();
+
+  const handleDragStart = (e) => {
+    let index = Number(e.currentTarget.getAttribute("data-index"));
+    e.dataTransfer.setData("index", index);
+    setDragIndex(index);
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    let index = Number(e.currentTarget.getAttribute("data-index"));
+    const mouseY = e.clientY;
+
+    const imgContainer = e.currentTarget;
+    const containerTop = imgContainer.offsetTop;
+    const containerHeight = imgContainer.clientHeight;
+
+    let upperHalf = mouseY < containerTop + containerHeight / 2;
+    let lowerHalf = mouseY > containerTop + containerHeight / 2;
+
+    upperHalf && e.currentTarget.classList.add("upperHalf");
+    lowerHalf && e.currentTarget.classList.add("lowerHalf");
+
+    lowerHalf && e.currentTarget.classList.remove("upperHalf");
+    upperHalf && e.currentTarget.classList.remove("lowerHalf");
+
+    console.log("upperHalf", upperHalf);
+    console.log("lowerHalf", lowerHalf);
+  };
+
+  const handleDrop = (e) => {
+    let index = Number(e.currentTarget.getAttribute("data-index"));
+    e.currentTarget.classList.remove("upper-half");
+    e.preventDefault();
+
+    const sourceIndex = e.dataTransfer.getData("index");
+    const newImages = [...items];
+    const [draggedImage] = newImages.splice(sourceIndex, 1);
+    newImages.splice(index, 0, draggedImage);
+    onSort(newImages);
+  };
+
+  useEffect(() => {
+    const wrapper = document.getElementById("wrapper");
+
+    [...wrapper.children].forEach((elem, i) => {
+      elem.setAttribute("data-index", i);
+      elem.addEventListener("drag", handleDragStart);
+      elem.addEventListener("dragover", handleDragOver);
+      elem.addEventListener("drop", handleDrop);
+    });
+
+    return () => {
+      [...wrapper.children].forEach((elem, i) => {
+        elem.removeAttribute("data-index");
+        elem.removeEventListener("drag", handleDragStart);
+        elem.removeEventListener("dragover", handleDragOver);
+        elem.removeEventListener("drop", handleDrop);
+      });
+    };
+  }, [children, dragIndex]);
+
+  // useEffect(
+  //   (e) => {
+  //     if (isUpperHalf) {
+  //       e.currentTarget.classList.add("upperHalf");
+  //     } else if (isLowerHalf) {
+  //       e.currentTarget.classList.add("lowerHalf");
+  //     }
+  //   },
+  //   [isUpperHalf, isLowerHalf]
+  // );
+
+  return <div id="wrapper">{children}</div>;
 }
