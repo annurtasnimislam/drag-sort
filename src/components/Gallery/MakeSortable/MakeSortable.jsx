@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 export default function MakeSortable({ children, items, onSort }) {
-  const [isUpperHalf, setIsUpperHalf] = useState(false);
   const [isLowerHalf, setIsLowerHalf] = useState(false);
   const [dragIndex, setDragIndex] = useState();
 
@@ -12,7 +11,7 @@ export default function MakeSortable({ children, items, onSort }) {
   };
   const handleDragOver = (e) => {
     e.preventDefault();
-    let index = Number(e.currentTarget.getAttribute("data-index"));
+
     const mouseY = e.clientY;
 
     const imgContainer = e.currentTarget;
@@ -22,26 +21,38 @@ export default function MakeSortable({ children, items, onSort }) {
     let upperHalf = mouseY < containerTop + containerHeight / 2;
     let lowerHalf = mouseY > containerTop + containerHeight / 2;
 
-    upperHalf && e.currentTarget.classList.add("upperHalf");
-    lowerHalf && e.currentTarget.classList.add("lowerHalf");
+    [...document.querySelectorAll(".drag-over")].forEach((elem) =>
+      elem.classList.remove("upperHalf", "lowerHalf", "drag-over")
+    );
 
-    lowerHalf && e.currentTarget.classList.remove("upperHalf");
-    upperHalf && e.currentTarget.classList.remove("lowerHalf");
-
-    console.log("upperHalf", upperHalf);
-    console.log("lowerHalf", lowerHalf);
+    if (upperHalf) {
+      e.currentTarget.classList.add("upperHalf", "drag-over");
+      setIsLowerHalf(false);
+    } else if (lowerHalf) {
+      e.currentTarget.classList.add("lowerHalf", "drag-over");
+      setIsLowerHalf(true);
+    }
   };
 
   const handleDrop = (e) => {
-    let index = Number(e.currentTarget.getAttribute("data-index"));
-    e.currentTarget.classList.remove("upper-half");
     e.preventDefault();
+    let index = Number(e.currentTarget.getAttribute("data-index"));
 
-    const sourceIndex = e.dataTransfer.getData("index");
+    let targetIndex;
+    if (isLowerHalf) {
+      targetIndex = index + 1;
+    } else {
+      targetIndex = index;
+    }
+
     const newImages = [...items];
-    const [draggedImage] = newImages.splice(sourceIndex, 1);
-    newImages.splice(index, 0, draggedImage);
+    const [draggedImage] = newImages.splice(dragIndex, 1);
+    newImages.splice(targetIndex, 0, draggedImage);
     onSort(newImages);
+
+    [...document.querySelectorAll(".drag-over")].forEach((elem) =>
+      elem.classList.remove("upperHalf", "lowerHalf", "drag-over")
+    );
   };
 
   useEffect(() => {
@@ -62,18 +73,7 @@ export default function MakeSortable({ children, items, onSort }) {
         elem.removeEventListener("drop", handleDrop);
       });
     };
-  }, [children, dragIndex]);
-
-  // useEffect(
-  //   (e) => {
-  //     if (isUpperHalf) {
-  //       e.currentTarget.classList.add("upperHalf");
-  //     } else if (isLowerHalf) {
-  //       e.currentTarget.classList.add("lowerHalf");
-  //     }
-  //   },
-  //   [isUpperHalf, isLowerHalf]
-  // );
+  }, [children, dragIndex, isLowerHalf]);
 
   return <div id="wrapper">{children}</div>;
 }

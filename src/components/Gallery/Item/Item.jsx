@@ -1,27 +1,18 @@
+import { useState } from "react";
 import "./Item.css";
 import { TbDragDrop } from "react-icons/tb";
 
 export default function Item({ image }) {
+  const [drag, setDrag] = useState(false);
+
   return (
-    <div
-      id="wrapper"
-      draggable={false}
-      //   className={`${classes.container} ${
-      //     index === dragOver
-      //       ? isUpperHalf
-      //         ? classes.upperHalf
-      //         : isLowerHalf
-      //         ? classes.lowerHalf
-      //         : ""
-      //       : ""
-      //   } `}
-      className={"container"}
-    >
-      <div draggable={true} className="imgContainer">
+    <div draggable={false} className={"container"}>
+      <div draggable={drag ? true : false} className="imgContainer">
         <div
           id="Handler"
           className="handler"
-          //   onMouseDown={() => setDrag(true)}
+          onMouseDown={() => setDrag(true)}
+          onMouseUp={() => setDrag(false)}
         >
           <TbDragDrop />
         </div>
